@@ -44,7 +44,6 @@ class ATP_ThirdPersonCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* CrouchAction;
 
-	bool IsMovement = false;
 	bool IsRotation = false;
 	bool bIsChangeRotation = false;
 
@@ -56,6 +55,14 @@ class ATP_ThirdPersonCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rotation, meta = (AllowPrivateAccess = "true", Units = "s"))
 	double RotationTime = 5.0f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true", Units = "cm"))
+    double MinHeightStopCamera = -10.0f;
+
+	bool bIsCameraStop = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, meta = (AllowPrivateAccess = "true"))
+	bool bIsCharacterDead = false;
+    	
 public:
 	
 	ATP_ThirdPersonCharacter();

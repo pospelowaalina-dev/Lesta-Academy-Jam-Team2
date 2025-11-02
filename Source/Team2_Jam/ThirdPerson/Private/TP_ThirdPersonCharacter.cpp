@@ -57,6 +57,16 @@ ATP_ThirdPersonCharacter::ATP_ThirdPersonCharacter()
 void ATP_ThirdPersonCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//Stop camera after falling
+	if (!bIsCameraStop && GetActorLocation().Z < MinHeightStopCamera)
+	{
+		bIsCameraStop = true;
+		FDetachmentTransformRules rules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		CameraBoom->DetachFromComponent(rules);
+	}
+
+	// Rotate in movement
 	if (bIsChangeRotation && Controller)
 	{
 		RotationTickTime += DeltaTime;
@@ -117,7 +127,6 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Moving
 		MovementDirection = FVector(1, 0, 0);
-		IsMovement = false;
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered,
 			this, &ATP_ThirdPersonCharacter::Move);
 		
@@ -169,7 +178,6 @@ void ATP_ThirdPersonCharacter::Move(const FInputActionValue& Value)
 		// get forward vector
 		const FVector ForwardDirection = YawRotation.Vector();
 
-		IsMovement = true;
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.X);
 	}
