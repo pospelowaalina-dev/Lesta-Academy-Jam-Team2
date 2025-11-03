@@ -25,13 +25,17 @@ void ATP_KillBox::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!DisableCamera)
+	/*if (!DisableCamera)
 	{
 		Collider->OnComponentBeginOverlap.AddDynamic(this, &ATP_KillBox::OnOverlapBegin);
 	}
 	if (!DisableDeath)
 	{
 		Collider->OnComponentEndOverlap.AddDynamic(this, &ATP_KillBox::OnOverlapEnd);
+	}*/
+	if (!DisableDeath)
+	{
+		Collider->OnComponentBeginOverlap.AddDynamic(this, &ATP_KillBox::OnOverlapBegin);
 	}
 }
 
@@ -41,7 +45,8 @@ void ATP_KillBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	{
 		if (ATP_ThirdPersonCharacter *Character = Cast<ATP_ThirdPersonCharacter>(OtherActor))
 		{
-			Character->MinHeightStopCamera = Character->GetActorLocation().Z;
+			//Character->MinHeightStopCamera = Character->GetActorLocation().Z;
+			Character->MinHeightCharacterDead = Character->GetActorLocation().Z;
 		}
 	}
 }
