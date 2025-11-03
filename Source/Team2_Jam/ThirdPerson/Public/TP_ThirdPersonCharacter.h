@@ -72,6 +72,15 @@ class ATP_ThirdPersonCharacter : public ACharacter
 	bool StopFalling = false;
 
 	bool StartFalling = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+	double LockAxeZ = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+	bool bUsLockAxeZWithManuallySet = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+	bool bIsLockAxeZ = true;
 public:
 	
 	ATP_ThirdPersonCharacter();
