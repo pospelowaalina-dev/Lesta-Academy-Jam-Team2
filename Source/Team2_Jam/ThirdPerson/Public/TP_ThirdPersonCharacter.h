@@ -54,9 +54,6 @@ class ATP_ThirdPersonCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rotation, meta = (AllowPrivateAccess = "true", Units = "s"))
 	double RotationTime = 5.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true", Units = "cm"))
-    double MinHeightStopCamera = -10.0f;
 
 	bool bIsCameraStop = false;
 
@@ -64,12 +61,21 @@ class ATP_ThirdPersonCharacter : public ACharacter
 	bool bIsCharacterDead = false;
 
 	bool bIsJumping = false;
-    	
+
+	double JumpHeight = 0.0f;
+
+	void Dead();
 public:
 	
 	ATP_ThirdPersonCharacter();
 
 	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true", Units = "cm"))
+	double MinHeightStopCamera = -10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true", Units = "cm"))
+	double MinHeightCharacterDead = -30.0f;
 
 protected:
 
@@ -80,6 +86,8 @@ protected:
 	void CrouchToggle(const FInputActionValue& Value);
 
 	virtual void Jump() override;
+
+	virtual void StopJumping() override;
 
 protected:
 
