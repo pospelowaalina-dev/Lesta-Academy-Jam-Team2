@@ -16,6 +16,9 @@ ATP_KillBox::ATP_KillBox()
 	Collider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	Collider->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); // Or ECC_WorldDynamic, etc.
 	Collider->SetGenerateOverlapEvents(true);
+
+	DisableCamera = false;
+	DisableDeath = false;
 }
 
 void ATP_KillBox::BeginPlay()
@@ -28,7 +31,7 @@ void ATP_KillBox::BeginPlay()
 	}
 	if (!DisableDeath)
 	{
-		Collider->OnComponentBeginOverlap.AddDynamic(this, &ATP_KillBox::OnOverlapEnd);
+		Collider->OnComponentEndOverlap.AddDynamic(this, &ATP_KillBox::OnOverlapEnd);
 	}
 }
 
@@ -36,18 +39,18 @@ void ATP_KillBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (TObjectPtr<ATP_ThirdPersonCharacter> Character = Cast<ATP_ThirdPersonCharacter>(OtherActor))
+		if (ATP_ThirdPersonCharacter *Character = Cast<ATP_ThirdPersonCharacter>(OtherActor))
 		{
 			Character->MinHeightStopCamera = Character->GetActorLocation().Z;
 		}
 	}
 }
 
-void ATP_KillBox::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATP_KillBox::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (TObjectPtr<ATP_ThirdPersonCharacter> Character = Cast<ATP_ThirdPersonCharacter>(OtherActor))
+		if (ATP_ThirdPersonCharacter *Character = Cast<ATP_ThirdPersonCharacter>(OtherActor))
 		{
 			Character->MinHeightCharacterDead = Character->GetActorLocation().Z;
 		}

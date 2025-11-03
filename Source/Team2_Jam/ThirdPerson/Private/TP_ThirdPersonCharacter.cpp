@@ -66,13 +66,6 @@ void ATP_ThirdPersonCharacter::Tick(float DeltaTime)
 		CameraBoom->DetachFromComponent(rules);
 	}
 
-	//Dead after falling
-	if (!bIsCharacterDead && GetActorLocation().Z < MinHeightStopCamera)
-	{
-		bIsCharacterDead = true;
-		Dead();
-	}
-
 	//Jumping
 	if (bIsJumping)
 	{
@@ -108,6 +101,13 @@ void ATP_ThirdPersonCharacter::Tick(float DeltaTime)
 					FinishRotate, RotationTickTime / RotationTime, 1));
 			}
 		}
+	}
+
+	//Dead after falling
+	if (!bIsCharacterDead && GetActorLocation().Z < MinHeightCharacterDead)
+	{
+		bIsCharacterDead = true;
+		Dead();
 	}
 }
 
