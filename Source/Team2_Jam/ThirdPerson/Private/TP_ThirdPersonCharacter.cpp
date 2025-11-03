@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "UObject/UnrealTypePrivate.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -69,8 +70,26 @@ void ATP_ThirdPersonCharacter::Tick(float DeltaTime)
 	//Jumping
 	if (bIsJumping)
 	{
+		GetCharacterMovement()->Velocity.Z += GetCharacterMovement()->JumpZVelocity * DeltaTime;
 		//JumpMaxHoldTime += 0.1;
-		GetCharacterMovement()->JumpZVelocity += 100;
+		//GetCharacterMovement()->JumpZVelocity += 100;
+	}
+	if (GetCharacterMovement() && GetCharacterMovement()->IsFalling())
+	{
+		StartFalling = true;
+	}
+	else
+	{
+		if (StartFalling)
+		{
+			StartFalling = true;
+			StopFalling = true;
+		}
+	}
+	if (StopFalling)
+	{
+		StopFalling = false;
+		GetCharacterMovement()->Velocity.Z = JumpHeight;
 	}
 
 	// Rotate in movement
@@ -152,8 +171,8 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Jumping
 		//JumpHeight = JumpMaxHoldTime;
-		JumpHeight = GetCharacterMovement()->JumpZVelocity;
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Ongoing,
+		JumpHeight = GetCharacterMovement()->Velocity.Z;
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started,
 			this, &ATP_ThirdPersonCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed,
 			this, &ACharacter::StopJumping);
@@ -200,17 +219,20 @@ void ATP_ThirdPersonCharacter::Move(const FInputActionValue& Value)
 	
 void ATP_ThirdPersonCharacter::CrouchToggle(const FInputActionValue& Value)
 {
-	if (!bIsJumping)
+	if (!IsElspressed)
 	{
-		if (GetMovementComponent() && !GetMovementComponent()->IsFalling())
+		if (!bIsJumping)
 		{
-			if (bIsCrouched)
+			if (GetMovementComponent() && !GetMovementComponent()->IsFalling())
 			{
-				Super::UnCrouch();
-			}
-			else
-			{
-				Super::Crouch();
+				if (bIsCrouched)
+				{
+					Super::UnCrouch();
+				}
+				else
+				{
+					Super::Crouch();
+				}
 			}
 		}
 	}
@@ -218,19 +240,26 @@ void ATP_ThirdPersonCharacter::CrouchToggle(const FInputActionValue& Value)
 
 void ATP_ThirdPersonCharacter::Jump()
 {
-	if (!bIsJumping)
+	if (!IsElspressed)
 	{
-		bIsJumping = true;
-		Super::Jump();
+		if (!bIsJumping)
+		{
+			JumpHeight = GetCharacterMovement()->Velocity.Z;
+			bIsJumping = true;
+			Super::Jump();
+		}
 	}
 }
 
 void ATP_ThirdPersonCharacter::StopJumping()
 {
-	bIsJumping = false;
-	GetCharacterMovement()->JumpZVelocity = JumpHeight;
-//	JumpMaxHoldTime = JumpHeight;
-	Super::StopJumping();
+	if (!IsElspressed)
+	{
+		StartFalling = true;
+		bIsJumping = false;
+		//	JumpMaxHoldTime = JumpHeight;
+		Super::StopJumping();
+	}
 }
 
 void ATP_ThirdPersonCharacter::Dead()

@@ -65,6 +65,13 @@ class ATP_ThirdPersonCharacter : public ACharacter
 	double JumpHeight = 0.0f;
 
 	void Dead();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (AllowPrivateAccess = "true"))
+	bool IsElspressed = false;
+
+	bool StopFalling = false;
+
+	bool StartFalling = false;
 public:
 	
 	ATP_ThirdPersonCharacter();
