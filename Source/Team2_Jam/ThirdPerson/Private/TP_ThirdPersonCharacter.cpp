@@ -66,6 +66,20 @@ void ATP_ThirdPersonCharacter::Tick(float DeltaTime)
 		CameraBoom->DetachFromComponent(rules);
 	}
 
+	//Dead after falling
+	if (!bIsCharacterDead && GetActorLocation().Z < MinHeightStopCamera)
+	{
+		bIsCharacterDead = true;
+		Dead();
+	}
+
+	//Jumping
+	if (bIsJumping)
+	{
+		//JumpMaxHoldTime += 0.1;
+		GetCharacterMovement()->JumpZVelocity += 100;
+	}
+
 	// Rotate in movement
 	if (bIsChangeRotation && Controller)
 	{
@@ -137,7 +151,8 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		}
 
 		// Jumping
-		
+		//JumpHeight = JumpMaxHoldTime;
+		JumpHeight = GetCharacterMovement()->JumpZVelocity;
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Ongoing,
 			this, &ATP_ThirdPersonCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed,
@@ -203,6 +218,26 @@ void ATP_ThirdPersonCharacter::CrouchToggle(const FInputActionValue& Value)
 
 void ATP_ThirdPersonCharacter::Jump()
 {
-	bIsJumping = true;
-	Super::Jump();
+	if (!bIsJumping)
+	{
+		bIsJumping = true;
+		Super::Jump();
+	}
+}
+
+void ATP_ThirdPersonCharacter::StopJumping()
+{
+	bIsJumping = false;
+	GetCharacterMovement()->JumpZVelocity = JumpHeight;
+//	JumpMaxHoldTime = JumpHeight;
+	Super::StopJumping();
+}
+
+void ATP_ThirdPersonCharacter::Dead()
+{
+	UFunction *RestartFunction = GetClass()->FindFunctionByName(FName("Restart"));
+	if (RestartFunction)
+	{
+		ProcessEvent(RestartFunction, this);
+	}
 }
