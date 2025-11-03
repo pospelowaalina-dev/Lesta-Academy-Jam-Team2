@@ -1,9 +1,9 @@
 ﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "../Public/TP_ChangeCameraAngle.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Team2_Jam/ThirdPerson/Public/TP_ThirdPersonCharacter.h"
-#include "../Public/TP_ChangeCameraAngle.h"
 
 ATP_ChangeCameraAngle::ATP_ChangeCameraAngle()
 {
