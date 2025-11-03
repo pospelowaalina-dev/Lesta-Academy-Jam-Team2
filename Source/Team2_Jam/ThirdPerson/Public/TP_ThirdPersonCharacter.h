@@ -62,6 +62,8 @@ class ATP_ThirdPersonCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, meta = (AllowPrivateAccess = "true"))
 	bool bIsCharacterDead = false;
+
+	bool bIsJumping = false;
     	
 public:
 	
@@ -73,11 +75,11 @@ protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
-	void StopMoving();
 	
 	/** Called for stop crouching */
 	void CrouchToggle(const FInputActionValue& Value);
+
+	virtual void Jump() override;
 
 protected:
 

@@ -139,7 +139,7 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		// Jumping
 		
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Ongoing,
-			this, &ACharacter::Jump);
+			this, &ATP_ThirdPersonCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed,
 			this, &ACharacter::StopJumping);
 
@@ -185,12 +185,24 @@ void ATP_ThirdPersonCharacter::Move(const FInputActionValue& Value)
 	
 void ATP_ThirdPersonCharacter::CrouchToggle(const FInputActionValue& Value)
 {
-	if (bIsCrouched)
+	if (!bIsJumping)
 	{
-		Super::UnCrouch();
+		if (GetMovementComponent() && !GetMovementComponent()->IsFalling())
+		{
+			if (bIsCrouched)
+			{
+				Super::UnCrouch();
+			}
+			else
+			{
+				Super::Crouch();
+			}
+		}
 	}
-	else
-	{
-		Super::Crouch();
-	}
+}
+
+void ATP_ThirdPersonCharacter::Jump()
+{
+	bIsJumping = true;
+	Super::Jump();
 }
