@@ -60,6 +60,12 @@ void ATP_ThirdPersonCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Fix Camera Axe Z
+	if (bIsLockAxeZ)
+	{
+		CameraBoom->SetWorldLocation(FVector(GetActorLocation().X, GetActorLocation().Y, LockAxeZ));
+	}
+	
 	//Stop camera after falling
 	if (!bIsCameraStop && GetActorLocation().Z < MinHeightStopCamera)
 	{
@@ -155,6 +161,11 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		if (USkeletalMeshComponent *CharacterMesh = GetMesh())
 		{
 			CharacterMesh->SetMobility(EComponentMobility::Movable);
+		}
+
+		if (!bUsLockAxeZWithManuallySet)
+		{
+			LockAxeZ = GetActorLocation().Z;
 		}
 
 		// Moving
